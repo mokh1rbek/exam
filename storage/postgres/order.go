@@ -99,8 +99,8 @@ func (f *OrderRepo) GetList(ctx context.Context, req *models.GetListOrderRequest
 
 	var (
 		resp   = models.GetListOrderResponse{}
-		offset = " OFFSET 0"
-		limit  = " LIMIT 5"
+		offset = ""
+		limit  = ""
 	)
 
 	if req.Limit > 0 {
@@ -114,94 +114,67 @@ func (f *OrderRepo) GetList(ctx context.Context, req *models.GetListOrderRequest
 	query := `
 		SELECT
 			COUNT(*) OVER(),
-			c1.category_id,
-			c1.name,
-			c1.product_id
+			o.id,
+			o.description,
+			p.id,
+			p.name,
+			c.id,
+			c.name,
+			c.parent_id
 		FROM
-			order AS c1
-		WHERE c1.product_id IS NULL
+			order AS o
+		JOIN product AS p ON o.product_id = p.id
+		JOIN category ON p.category_id = c.id
 	`
 
 	query += offset + limit
 
 	rows, err := f.db.Query(ctx, query)
-	if err != nil {
-		return nil, err
-	}
 
 	for rows.Next() {
-
-		res := &models.OrderList{}
-
+		
 		var (
-			id          sql.NullString
-			name        sql.NullString
-			parent_uuid sql.NullString
+			productCategory models.ProductCategory
+			productList     models.ProductList
+
+			orderId          sql.NullString
+			orderDescription sql.NullString
+			productId        sql.NullString
+			productName      sql.NullString
+			categoryId       sql.NullString
+			categoryName     sql.NullString
+			categoryParentId sql.NullString
 		)
 
 		err := rows.Scan(
 			&resp.Count,
-			&id,
-			&name,
-			&parent_uuid,
+			&orderId,
+			&orderDescription,
+			&productId,
+			&productName,
+			&categoryId,
+			&categoryName,
+			&categoryParentId,
 		)
 
 		if err != nil {
 			return nil, err
 		}
 
-		res.Id = id.String
-		res.Name = name.String
-		res.ParentUUID = parent_uuid.String
+		productCategory.Id = categoryId.String
+		productCategory.Name = categoryName.String
+		productCategory.ParentID = categoryParentId.String
 
-		resp.Orders = append(resp.Orders, )
-	}
+		productList.Id = productId.String
+		productList.Name = productName.String
+		productList.Category = productCategory
 
-	for ind, category := range resp.Orders {
+		resp.Orders = append(resp.Orders, models.OrderList{
+			Id:          orderId.String,
+			Description: orderDescription.String,
+			Product:     productList,
+		})
 
-		childQuery := `
-			SELECT
-				c1.category_id,
-				c1.name,
-				c1.parent_uuid
-			FROM
-				category AS c1
-			WHERE c1.parent_uuid =  $1
-		`
-
-		childRows, err := f.db.Query(ctx, childQuery, category.Id)
-		if err != nil {
-			return nil, err
-		}
-
-		for childRows.Next() {
-
-			var (
-				id          sql.NullString
-				name        sql.NullString
-				parent_uuid sql.NullString
-			)
-
-			err := childRows.Scan(
-				&id,
-				&name,
-				&parent_uuid,
-			)
-
-			if err != nil {
-				return nil, err
-			}
-
-			category.ChildCategory = append(category.ChildCategory, &models.ChildCategory{
-				Id:       id.String,
-				Name:     name.String,
-				ParentId: parent_uuid.String,
-			})
-
-		}
-
-		resp.Categorys[ind] = category
-		fmt.Println(category)
 	}
 
 	return &resp, err
@@ -227,7 +200,7 @@ func (f *OrderRepo) Update(ctx context.Context, id string, req *models.UpdateOrd
 	params = map[string]interface{}{
 		"description": req.Description,
 		"product_id":  req.ProductId,
-		"order_id": id,
+		"order_id":    id,
 	}
 
 	query, args := helper.ReplaceQueryParams(query, params)

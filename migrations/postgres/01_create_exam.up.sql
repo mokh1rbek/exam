@@ -19,7 +19,7 @@ CREATE TABLE product (
 CREATE TABLE order (
     order_id UUID PRIMARY KEY NOT NULL,
     description VARCHAR(255) NOT NULL,
-    product_id UUID NOT NULL REFERENCES product, 
+    product_id UUID NOT NULL REFERENCES product(product_id), 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL
 );

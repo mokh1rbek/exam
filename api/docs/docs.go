@@ -885,10 +885,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "product": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ProductList"
-                    }
+                    "$ref": "#/definitions/models.ProductList"
                 }
             }
         },
@@ -933,10 +930,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "category": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ProductCategory"
-                    }
+                    "$ref": "#/definitions/models.ProductCategory"
                 },
                 "name": {
                     "type": "string"

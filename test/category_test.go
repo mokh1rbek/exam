@@ -82,7 +82,7 @@ func deleteCategory(t *testing.T, id string) string {
 
 	resp, _ := PerformRequest(
 		http.MethodDelete,
-		fmt.Sprintf("/actor/%a", id),
+		fmt.Sprintf("/category/%v", id),
 		nil,
 		nil,
 	)

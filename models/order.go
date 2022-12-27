@@ -34,19 +34,19 @@ type GetListOrderRequest struct {
 }
 
 type GetListOrderResponse struct {
-	Count  int          `json:"count"`
-	Orders []*OrderList `json:"orders"`
+	Count  int         `json:"count"`
+	Orders []OrderList `json:"orders"`
 }
 
 type OrderList struct {
-	Id          string         `json:"order_id"`
-	Description string         `json:"description"`
-	Product     []*ProductList `json:"product"`
+	Id          string      `json:"order_id"`
+	Description string      `json:"description"`
+	Product     ProductList `json:"product"`
 }
 type ProductList struct {
-	Id       string             `json:"order_id"`
-	Name     string             `json:"name"`
-	Category []*ProductCategory `json:"category"`
+	Id       string          `json:"order_id"`
+	Name     string          `json:"name"`
+	Category ProductCategory `json:"category"`
 }
 type ProductCategory struct {
 	Id       string `json:"order_id"`

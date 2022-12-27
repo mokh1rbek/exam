@@ -71,20 +71,17 @@ func (f *CategoryRepo) GetByPKey(ctx context.Context, pkey *models.CategoryPrima
 		id          sql.NullString
 		name        sql.NullString
 		parent_uuid sql.NullString
-		createdAt   sql.NullString
-		updatedAt   sql.NullString
 	)
 
 	query := `
 		SELECT
-			category_id,
-			name,
-			parent_uuid,
-			created_at,
-			updated_at
+			c1.category_id,
+			c1.name,
+			c1.parent_uuid
 		FROM
-			category
-		WHERE category_id = $1
+			category AS c1
+		WHERE c1.parent_uuid IS NULL AND c1.category_id = $1
+
 	`
 
 	err := f.db.QueryRow(ctx, query, pkey.Id).
@@ -92,8 +89,6 @@ func (f *CategoryRepo) GetByPKey(ctx context.Context, pkey *models.CategoryPrima
 			&id,
 			&name,
 			&parent_uuid,
-			&createdAt,
-			&updatedAt,
 		)
 
 	if err != nil {
@@ -104,8 +99,6 @@ func (f *CategoryRepo) GetByPKey(ctx context.Context, pkey *models.CategoryPrima
 		Id:         id.String,
 		Name:       name.String,
 		ParentUUID: parent_uuid.String,
-		CreatedAt:  createdAt.String,
-		UpdatedAt:  updatedAt.String,
 	}, nil
 }
 
