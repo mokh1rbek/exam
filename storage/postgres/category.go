@@ -30,12 +30,12 @@ func (f *CategoryRepo) Create(ctx context.Context, category *models.CreateCatego
 	)
 
 	query = `
-		INSERT INTO categorys (
-			category_id,
+		INSERT INTO categories (
+			id,
 			name,
 			parent_uuid,
 			updated_at
-		) VALUES ( $1, $2, $3, now())
+		) VALUES ( $1, $2, $3, now() )
 	`
 
 	_, err := f.db.Exec(ctx, query,
