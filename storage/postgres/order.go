@@ -30,14 +30,13 @@ func (f *OrderRepo) Create(ctx context.Context, order *models.CreateOrder) (stri
 	)
 
 	query = `
-		INSERT INTO order(
-			order_id,
+		INSERT INTO orders(
+			id,
 			description,
 			product_id,
 			updated_at
-		) VALUES ( $1, $2, $3, now())
+		) VALUES ( $1, $2, $3, now() )
 	`
-
 	_, err := f.db.Exec(ctx, query,
 		id,
 		order.Description,
@@ -112,19 +111,20 @@ func (f *OrderRepo) GetList(ctx context.Context, req *models.GetListOrderRequest
 	}
 
 	query := `
-		SELECT
-			COUNT(*) OVER(),
-			o.id,
-			o.description,
-			p.id,
-			p.name,
-			c.id,
-			c.name,
-			c.parent_id
-		FROM
-			order AS o
-		JOIN product AS p ON o.product_id = p.id
-		JOIN category ON p.category_id = c.id
+	SELECT
+		COUNT(*) OVER(),
+		orders.id,
+		orders.description,
+		products.id,
+		products.name,
+		categories.id,
+		categories.name,
+		categories.parent_id
+	FROM
+    	orders
+	JOIN products ON orders.product_id = products.id
+	JOIN categories ON products.category_id = categories.id
+	WHERE orders.deleted_at IS NULL AND products.deleted_at IS NULL AND categories.deleted_at IS NULL
 	`
 
 	query += offset + limit
@@ -132,7 +132,6 @@ func (f *OrderRepo) GetList(ctx context.Context, req *models.GetListOrderRequest
 	rows, err := f.db.Query(ctx, query)
 
 	for rows.Next() {
-		
 		var (
 			productCategory models.ProductCategory
 			productList     models.ProductList
@@ -156,7 +155,6 @@ func (f *OrderRepo) GetList(ctx context.Context, req *models.GetListOrderRequest
 			&categoryName,
 			&categoryParentId,
 		)
-
 		if err != nil {
 			return nil, err
 		}
@@ -189,18 +187,18 @@ func (f *OrderRepo) Update(ctx context.Context, id string, req *models.UpdateOrd
 
 	query = `
 		UPDATE
-			order
+			orders
 		SET
 			description = :description,
 			product_id = :product_id,
 			updated_at = now()
-		WHERE order_id = :order_id
+		WHERE id = :id
 	`
 
 	params = map[string]interface{}{
+		"id":          req.Id,
 		"description": req.Description,
 		"product_id":  req.ProductId,
-		"order_id":    id,
 	}
 
 	query, args := helper.ReplaceQueryParams(query, params)
@@ -215,7 +213,7 @@ func (f *OrderRepo) Update(ctx context.Context, id string, req *models.UpdateOrd
 
 func (f *OrderRepo) Delete(ctx context.Context, req *models.OrderPrimarKey) error {
 
-	_, err := f.db.Exec(ctx, "DELETE FROM order WHERE order_id = $1", req.Id)
+	_, err := f.db.Exec(ctx, "UPDATE orders SET deleted_at = now() WHERE id = $1", req.Id)
 	if err != nil {
 		return err
 	}
