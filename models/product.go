@@ -6,24 +6,24 @@ type ProductPrimarKey struct {
 
 type CreateProduct struct {
 	Name       string `json:"name"`
-	Price      string `json:"price"`
+	Price      float64 `json:"price"`
 	CategoryId string `json:"category_id"`
 }
 
 type UpdateProduct struct {
-	Id         string `json:"product_id"`
-	Name       string `json:"name"`
-	Price      string `json:"price"`
-	CategoryId string `json:"category_id"`
+	Id         string  `json:"product_id"`
+	Name       string  `json:"name"`
+	Price      float64 `json:"price"`
+	CategoryId string  `json:"category_id"`
 }
 
 type Product struct {
 	Id         string `json:"product_id"`
 	Name       string `json:"name"`
-	Price      string `json:"price"`
+	Price      float64 `json:"price"`
 	CategoryId string `json:"category_id"`
 	CreatedAt  string `json:"created_at"`
-	ApdatedAt  string `json:"updated_at"`
+	UpdatedAt  string `json:"updated_at"`
 }
 
 type GetListProductRequest struct {
