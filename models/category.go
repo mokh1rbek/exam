@@ -33,15 +33,11 @@ type GetListCategoryResponse struct {
 	Categorys []*CategoryByParent `json:"categorys"`
 }
 
-type ChildCategory struct {
-	Id       string `json:"category_id"`
-	ParentId string `json:"id"`
-	Name     string `json:"name"`
-}
-
 type CategoryByParent struct {
-	Id            string           `json:"id"`
-	Name          string           `json:"name"`
-	ParentUUID    string           `json:"parent_uuid"`
-	ChildCategory []*ChildCategory `json:"childs"`
+	Id            string      `json:"id"`
+	Name          string      `json:"name"`
+	ParentUUID    string      `json:"parent_uuid"`
+	CreatedAt     string      `json:"created_at"`
+	UpdatedAt     string      `json:"updated_at"`
+	ChildCategory []*Category `json:"childs"`
 }

@@ -749,8 +749,11 @@ const docTemplate = `{
                 "childs": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ChildCategory"
+                        "$ref": "#/definitions/models.Category"
                     }
+                },
+                "created_at": {
+                    "type": "string"
                 },
                 "id": {
                     "type": "string"
@@ -760,19 +763,8 @@ const docTemplate = `{
                 },
                 "parent_uuid": {
                     "type": "string"
-                }
-            }
-        },
-        "models.ChildCategory": {
-            "type": "object",
-            "properties": {
-                "category_id": {
-                    "type": "string"
                 },
-                "id": {
-                    "type": "string"
-                },
-                "name": {
+                "updated_at": {
                     "type": "string"
                 }
             }

@@ -16,22 +16,17 @@ definitions:
     properties:
       childs:
         items:
-          $ref: '#/definitions/models.ChildCategory'
+          $ref: '#/definitions/models.Category'
         type: array
+      created_at:
+        type: string
       id:
         type: string
       name:
         type: string
       parent_uuid:
         type: string
-    type: object
-  models.ChildCategory:
-    properties:
-      category_id:
-        type: string
-      id:
-        type: string
-      name:
+      updated_at:
         type: string
     type: object
   models.CreateCategory:
