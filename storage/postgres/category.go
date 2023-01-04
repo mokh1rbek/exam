@@ -30,7 +30,7 @@ func (f *CategoryRepo) Create(ctx context.Context, category *models.CreateCatego
 	)
 
 	query = `
-		INSERT INTO categories (
+		INSERT INTO categorys (
 			id,
 			name,
 			parent_uuid,
@@ -63,14 +63,14 @@ func (f *CategoryRepo) GetByPKey(ctx context.Context, pkey *models.CategoryPrima
 
 	query := `
 		SELECT
-			category_id,
+			id,
 			name,
 			parent_uuid,
 			created_at,
 			updated_at
 		FROM
 			categorys 
-		WHERE parent_uuid IS NULL AND category_id = $1
+		WHERE parent_uuid IS NULL AND id = $1
 
 	`
 
@@ -97,14 +97,14 @@ func (f *CategoryRepo) GetByPKey(ctx context.Context, pkey *models.CategoryPrima
 
 	childQuery := `
 		SELECT
-			category_id,
+			id,
 			name,
 			parent_uuid,
 			created_at,
 			updated_at
 		FROM
 			categorys 
-		WHERE parent_uuid IS NULL AND category_id = $1
+		WHERE parent_uuid IS NULL AND id = $1
 	`
 
 	rows, err := f.db.Query(ctx, childQuery, resp.Id)
@@ -159,7 +159,7 @@ func (f *CategoryRepo) GetList(ctx context.Context, req *models.GetListCategoryR
 	query := `
 		SELECT
 			COUNT(*) OVER(),
-			category_id,
+			id,
 			name,
 			parent_uuid,
 			created_at,
@@ -212,7 +212,7 @@ func (f *CategoryRepo) GetList(ctx context.Context, req *models.GetListCategoryR
 
 		childQuery := `
 			SELECT
-				category_id,
+				id,
 				name,
 				parent_uuid,
 				created_at,
@@ -280,13 +280,13 @@ func (f *CategoryRepo) Update(ctx context.Context, id string, req *models.Update
 			name = :name,
 			parent_uuid = :parent_uuid,
 			updated_at = now()
-		WHERE category_id = :category_id AND deleted_at IS NULL
+		WHERE id = :id AND deleted_at IS NULL
 	`
 
 	params = map[string]interface{}{
 		"name":        req.Name,
 		"parent_uuid": req.ParentUUID,
-		"category_id": id,
+		"id":          id,
 	}
 
 	query, args := helper.ReplaceQueryParams(query, params)
@@ -301,7 +301,7 @@ func (f *CategoryRepo) Update(ctx context.Context, id string, req *models.Update
 
 func (f *CategoryRepo) Delete(ctx context.Context, req *models.CategoryPrimarKey) error {
 
-	_, err := f.db.Exec(ctx, "UPDATE categorys SET deleted_at = now() WHERE category_id = $1", req.Id)
+	_, err := f.db.Exec(ctx, "UPDATE categorys SET deleted_at = now() WHERE id = $1", req.Id)
 	if err != nil {
 		return err
 	}
