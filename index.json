@@ -1,0 +1,173 @@
+[
+    {
+        "id" : 1,
+        "name": "texnika",
+        "parent_id" : "",
+        "child" : [
+            {
+                "id" : 2,
+                "name": "texnika",
+                "parent_id" : 1,
+                "child" : [
+                    {
+                        "id" : 3,
+                        "name": "texnika",
+                        "parent_id" : 2,
+                        "child" : [
+                            {
+                                "id" : 4,
+                                "name": "texnika",
+                                "parent_id" : 3,
+                                "child" : [
+                                    {
+                                        "id" : 17,
+                                        "name": "texnika",
+                                        "parent_id" : 4,
+                                        "child" : [
+                                            {
+                                                "id" : 18,
+                                                "name": "texnika",
+                                                "parent_id" : 17,
+                                                "child" : [
+                                                    {
+                                                        "id" : 21,
+                                                        "name": "texnika",
+                                                        "parent_id" : 18
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "id" : 8,
+                                "name": "texnika",
+                                "parent_id" : 3,
+                                "child" : [
+                                    {
+                                        "id" : 14,
+                                        "name": "texnika",
+                                        "parent_id" : 8,
+                                        "child" : [
+                                            {
+                                                "id" : 25,
+                                                "name": "texnika",
+                                                "parent_id" : 14,
+                                                "child" : [
+                                                    {
+                                                        "id" : 26,
+                                                        "name": "texnika",
+                                                        "parent_id" : 25
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id" : 5,
+                        "name": "texnika",
+                        "parent_id" : 2,
+                        "child" : [
+                            {
+                                "id" : 7,
+                                "name": "texnika",
+                                "parent_id" : 5,
+                                "child" : [
+                                    {
+                                        "id" : 16,
+                                        "name": "texnika",
+                                        "parent_id" : 7,
+                                        "child" : [
+                                            {
+                                                "id" : 27,
+                                                "name": "texnika",
+                                                "parent_id" : 16
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id" : 6,
+                "name": "texnika",
+                "parent_id" : 1,
+                "child" : [
+                    {
+                        "id" : 9,
+                        "name": "texnika",
+                        "parent_id" : 6,
+                        "child" : [
+                            {
+                                "id" : 28,
+                                "name": "texnika",
+                                "parent_id" : 9
+                            }
+                        ]
+                    },
+                    {
+                        "id" : 13,
+                        "name": "texnika",
+                        "parent_id" : 6,
+                        "child" : [
+                            {
+                                "id" : 20,
+                                "name": "texnika",
+                                "parent_id" : 13
+                            }
+                        ]
+                    },
+                    {
+                        "id" : 23,
+                        "name": "texnika",
+                        "parent_id" : 6
+                    }    
+                ]
+            },
+            {
+                "id" : 11,
+                "name": "texnika",
+                "parent_id" : 1,
+                "child" : [
+                    {
+                        "id" : 15,
+                        "name": "texnika",
+                        "parent_id" : 11,
+                        "child" : [
+                            {
+                                "id" : 19,
+                                "name": "texnika",
+                                "parent_id" : 15
+                            },
+                            {
+                                "id" : 30,
+                                "name": "texnika",
+                                "parent_id" : 15
+                            }
+                        ]
+                    },
+                    {
+                        "id" : 22,
+                        "name": "texnika",
+                        "parent_id" : 11,
+                        "child" : [
+                            {
+                                "id" : 24,
+                                "name": "texnika",
+                                "parent_id" : 22
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }          
+]

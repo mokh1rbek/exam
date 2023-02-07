@@ -30,6 +30,13 @@ type GetListCategoriesRequest struct {
 }
 
 type GetListCategoriesResponse struct {
-	Count      int32         `json:"count"`
-	Categories []*Categories `json:"categorys"`
+	Count      int32               `json:"count"`
+	Categories []*ChildsByCategory `json:"categorys"`
+}
+
+type ChildsByCategory struct {
+	Id            string              `json:"category_id"`
+	Name          string              `json:"name"`
+	ParentID      string              `json:"parent_id"`
+	ChildCategory []*ChildsByCategory `json:"childs"`
 }

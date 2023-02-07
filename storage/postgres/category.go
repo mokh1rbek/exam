@@ -285,13 +285,45 @@ func fetchCategories(categories []*models.Categories, parentUid *string) (result
 	return
 }
 
+func getChilds()
+
+func (r *CategoriesRepo) childs(ctx context.Context, req *models.Categories) (*models.GetListCategoriesResponse, error) {
+	resp := &models.GetListCategoriesResponse{}
+
+	var (
+		query string
+	)
+
+	query = `
+		SELECT 
+			id,
+			name,
+			parent_id,
+			created_at,
+			updated_at,
+		FROM
+			categories
+		WHERE deleted_at IS NULL
+	`
+	rows, err := r.db.Query(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next(){
+		
+	} 
+
+	return resp, nil
+}
+
 func (r *CategoriesRepo) Product2GetList(ctx context.Context, req *models.GetListCategoriesRequest) (*models.GetListCategoriesResponse, error) {
 
 	resp := &models.GetListCategoriesResponse{}
 
 	var (
 		query               string
-		categoryMap         = make(map[string]*models.Categories)
+		categoryMap         = make(map[string]*models.Categories) 
 		cateogryByParentMap = make(map[string][]*models.Categories)
 		parentCategory      = []*models.Categories{}
 	)
