@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	categoryRepo *postgres.CategoryRepo
+	categoryRepo *postgres.CategoriesRepo
 )
 
 func TestMain(m *testing.M) {
@@ -39,7 +39,7 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 
-	categoryRepo = postgres.NewCategoryRepo(pool)
+	categoryRepo = postgres.NewCategoriesRepo(pool)
 
 	os.Exit(m.Run())
 }

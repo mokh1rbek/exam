@@ -35,9 +35,9 @@ func TestCategory(t *testing.T) {
 }
 
 func createCategory(t *testing.T) string {
-	response := &models.Category{}
+	response := &models.Categories{}
 
-	request := &models.CreateCategory{
+	request := &models.CreateCategories{
 		Name: faker.Name(),
 	}
 
@@ -56,9 +56,9 @@ func createCategory(t *testing.T) string {
 	return response.Id
 }
 
-func updateCategory(t *testing.T, id string) string {
-	response := &models.Category{}
-	request := &models.UpdateCategory{
+func UpdateCategory(t *testing.T, id string) string {
+	response := &models.Categories{}
+	request := &models.UpdateCategories{
 		Id:   id,
 		Name: faker.Name(),
 	}

@@ -12,17 +12,17 @@ import (
 	"exam/pkg/helper"
 )
 
-type CategoryRepo struct {
+type CategoriesRepo struct {
 	db *pgxpool.Pool
 }
 
-func NewCategoryRepo(db *pgxpool.Pool) *CategoryRepo {
-	return &CategoryRepo{
+func NewCategoriesRepo(db *pgxpool.Pool) *CategoriesRepo {
+	return &CategoriesRepo{
 		db: db,
 	}
 }
 
-func (f *CategoryRepo) Create(ctx context.Context, category *models.CreateCategory) (string, error) {
+func (f *CategoriesRepo) Create(ctx context.Context, category *models.CreateCategories) (string, error) {
 
 	var (
 		id    = uuid.New().String()
@@ -41,7 +41,7 @@ func (f *CategoryRepo) Create(ctx context.Context, category *models.CreateCatego
 	_, err := f.db.Exec(ctx, query,
 		id,
 		category.Name,
-		helper.NewNullString(category.ParentUUID),
+		helper.NewNullString(category.ParentID),
 	)
 
 	if err != nil {
@@ -51,7 +51,7 @@ func (f *CategoryRepo) Create(ctx context.Context, category *models.CreateCatego
 	return id, nil
 }
 
-func (f *CategoryRepo) GetByPKey(ctx context.Context, pkey *models.CategoryPrimarKey) (*models.CategoryByParent, error) {
+func (f *CategoriesRepo) GetByPKey(ctx context.Context, pkey *models.CategoriesPrimarKey) (*models.Categories, error) {
 
 	var (
 		id          sql.NullString
@@ -87,12 +87,12 @@ func (f *CategoryRepo) GetByPKey(ctx context.Context, pkey *models.CategoryPrima
 		return nil, err
 	}
 
-	resp := &models.CategoryByParent{
-		Id:         id.String,
-		Name:       name.String,
-		ParentUUID: parent_uuid.String,
-		CreatedAt:  created_at.String,
-		UpdatedAt:  updated_at.String,
+	resp := &models.Categories{
+		Id:        id.String,
+		Name:      name.String,
+		ParentID:  parent_uuid.String,
+		CreatedAt: created_at.String,
+		UpdatedAt: updated_at.String,
 	}
 
 	childQuery := `
@@ -128,24 +128,271 @@ func (f *CategoryRepo) GetByPKey(ctx context.Context, pkey *models.CategoryPrima
 			return nil, err
 		}
 
-		resp.ChildCategory = append(resp.ChildCategory, &models.Category{
-			Id:         id.String,
-			Name:       name.String,
-			ParentUUID: parent_uuid.String,
-			CreatedAt:  created_at.String,
-			UpdatedAt:  updated_at.String,
+		resp.ChildCategory = append(resp.ChildCategory, &models.Categories{
+			Id:        id.String,
+			Name:      name.String,
+			ParentID:  parent_uuid.String,
+			CreatedAt: created_at.String,
+			UpdatedAt: updated_at.String,
 		})
 	}
 
 	return resp, nil
 }
 
-func (f *CategoryRepo) GetList(ctx context.Context, req *models.GetListCategoryRequest) (*models.GetListCategoryResponse, error) {
+// func (f *CategoriesRepo) GetList(ctx context.Context, req *models.GetListCategoryRequest) (*models.GetListCategoryResponse, error) {
+
+// 	var (
+// 		resp   = models.GetListCategoryResponse{}
+// 		offset = " OFFSET 0"
+// 		limit  = " LIMIT 5"
+// 	)
+
+// 	if req.Limit > 0 {
+// 		limit = fmt.Sprintf(" LIMIT %d", req.Limit)
+// 	}
+
+// 	if req.Offset > 0 {
+// 		offset = fmt.Sprintf(" OFFSET %d", req.Offset)
+// 	}
+
+// 	query := `
+// 		SELECT
+// 			COUNT(*) OVER(),
+// 			id,
+// 			name,
+// 			parent_uuid,
+// 			created_at,
+// 			updated_at
+// 		FROM
+// 			categorys
+// 		WHERE parent_uuid IS NULL AND deleted_at IS NULL
+// 	`
+
+// 	query += offset + limit
+
+// 	rows, err := f.db.Query(ctx, query)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	for rows.Next() {
+
+// 		res := &models.CategoryByParent{}
+
+// 		var (
+// 			id          sql.NullString
+// 			name        sql.NullString
+// 			parent_uuid sql.NullString
+// 			created_at  sql.NullString
+// 			updated_at  sql.NullString
+// 		)
+
+// 		err := rows.Scan(
+// 			&resp.Count,
+// 			&id,
+// 			&name,
+// 			&parent_uuid,
+// 			&created_at,
+// 			&updated_at,
+// 		)
+
+// 		if err != nil {
+// 			return nil, err
+// 		}
+
+// 		res.Id = id.String
+// 		res.Name = name.String
+// 		res.ParentUUID = parent_uuid.String
+
+// 		resp.Categorys = append(resp.Categorys, res)
+// 	}
+
+// 	for ind, category := range resp.Categorys {
+
+// 		childQuery := `
+// 			SELECT
+// 				id,
+// 				name,
+// 				parent_uuid,
+// 				created_at,
+// 				updated_at
+// 			FROM
+// 				categorys
+// 			WHERE parent_uuid =  $1 AND deleted_at IS NULL
+// 		`
+
+// 		childRows, err := f.db.Query(ctx, childQuery, category.Id)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+
+// 		for childRows.Next() {
+
+// 			var (
+// 				id          sql.NullString
+// 				name        sql.NullString
+// 				parent_uuid sql.NullString
+// 				created_at  sql.NullString
+// 				updated_at  sql.NullString
+// 			)
+
+// 			err := childRows.Scan(
+// 				&id,
+// 				&name,
+// 				&parent_uuid,
+// 				&created_at,
+// 				&updated_at,
+// 			)
+
+// 			if err != nil {
+// 				return nil, err
+// 			}
+
+// 			category.ChildCategory = append(category.ChildCategory, &models.Category{
+// 				Id:         id.String,
+// 				Name:       name.String,
+// 				ParentUUID: parent_uuid.String,
+// 				CreatedAt:  created_at.String,
+// 				UpdatedAt:  updated_at.String,
+// 			})
+
+// 		}
+
+// 		resp.Categorys[ind] = category
+// 	}
+
+// 	return &resp, err
+// }
+
+func fetchCategories(categories []*models.Categories, parentUid *string) (result []*models.Categories) {
+	result = make([]*models.Categories, 0)
+
+	for _, category := range categories {
+		if parentUid == nil {
+			if category.ParentID == "" {
+				category.ChildCategory = fetchCategories(categories, &category.ParentID)
+				result = append(result, category)
+			}
+		} else {
+			if category.ParentID != "" && *&category.ParentID == *parentUid {
+				category.ChildCategory = fetchCategories(categories, &category.ParentID)
+				result = append(result, category)
+			}
+		}
+	}
+
+	return
+}
+
+func (r *CategoriesRepo) Product2GetList(ctx context.Context, req *models.GetListCategoriesRequest) (*models.GetListCategoriesResponse, error) {
+
+	resp := &models.GetListCategoriesResponse{}
 
 	var (
-		resp   = models.GetListCategoryResponse{}
-		offset = " OFFSET 0"
-		limit  = " LIMIT 5"
+		query               string
+		categoryMap         = make(map[string]*models.Categories)
+		cateogryByParentMap = make(map[string][]*models.Categories)
+		parentCategory      = []*models.Categories{}
+	)
+
+	query = `
+		SELECT
+			COUNT(*) OVER(),
+			id,
+			name,
+			parent_id,
+			created_at,
+			updated_at
+		FROM 
+			categories
+		WHERE deleted_at IS NULL
+	`
+
+	rows, err := r.db.Query(ctx, query)
+	defer rows.Close()
+
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var (
+			id       sql.NullString
+			name     sql.NullString
+			parentId sql.NullString
+		)
+
+		err = rows.Scan(
+			&id,
+			&name,
+			&parentId,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		category := &models.Categories{
+			Id:       id.String,
+			Name:     name.String,
+			ParentID: parentId.String,
+		}
+
+		if category.ParentID == "" {
+			parentCategory = append(parentCategory, category)
+		}
+
+	}
+
+	for _, category := range parentCategory {
+
+		categoryMap[category.Id] = category
+
+		if category.ParentID == "" {
+			category.ParentID = "parent"
+		}
+
+		if _, ok := cateogryByParentMap[category.ParentID]; !ok {
+			cateogryByParentMap[category.ParentID] = append(cateogryByParentMap[category.ParentID], category)
+		} else {
+			cateogryByParentMap[category.ParentID] = append(cateogryByParentMap[category.ParentID], category)
+		}
+	}
+
+	var getChild func([]*models.Categories) []*models.Categories
+	getChild = func(categories []*models.Categories) []*models.Categories {
+		resp = &models.GetListCategoriesResponse{}
+
+		for _, category := range categories {
+			var c = category
+
+			subCategories := cateogryByParentMap[category.Id]
+			if len(subCategories) > 0 {
+				resp.Categories = append(resp.Categories, c)
+				continue
+			}
+
+			children := getChild(subCategories)
+			c.ChildCategory = children
+
+			resp.Categories = append(resp.Categories, c)
+		}
+
+		return resp.Categories
+	}
+
+	resp.Categories = getChild(cateogryByParentMap["parent"])
+
+	return resp, nil
+}
+
+func (f *CategoriesRepo) GetList(ctx context.Context, req *models.GetListCategoriesRequest) (*models.GetListCategoriesResponse, error) {
+
+	var (
+		resp   = models.GetListCategoriesResponse{}
+		offset = ""
+		limit  = ""
 	)
 
 	if req.Limit > 0 {
@@ -166,7 +413,7 @@ func (f *CategoryRepo) GetList(ctx context.Context, req *models.GetListCategoryR
 			updated_at
 		FROM
 			categorys 
-		WHERE parent_uuid IS NULL AND deleted_at IS NULL
+		WHERE deleted_at IS NULL
 	`
 
 	query += offset + limit
@@ -177,96 +424,44 @@ func (f *CategoryRepo) GetList(ctx context.Context, req *models.GetListCategoryR
 	}
 
 	for rows.Next() {
-
-		res := &models.CategoryByParent{}
-
 		var (
-			id          sql.NullString
-			name        sql.NullString
-			parent_uuid sql.NullString
-			created_at  sql.NullString
-			updated_at  sql.NullString
+			categoryByParent models.Categories
+			category         models.Categories
+
+			id        sql.NullString
+			parent_id sql.NullString
 		)
 
 		err := rows.Scan(
 			&resp.Count,
 			&id,
-			&name,
-			&parent_uuid,
-			&created_at,
-			&updated_at,
+			&parent_id,
 		)
-
 		if err != nil {
 			return nil, err
 		}
 
-		res.Id = id.String
-		res.Name = name.String
-		res.ParentUUID = parent_uuid.String
+		if parent_id.Valid {
+			// bu child
 
-		resp.Categorys = append(resp.Categorys, res)
-	}
-
-	for ind, category := range resp.Categorys {
-
-		childQuery := `
-			SELECT
-				id,
-				name,
-				parent_uuid,
-				created_at,
-				updated_at
-			FROM
-				categorys 
-			WHERE parent_uuid =  $1 AND deleted_at IS NULL
-		`
-
-		childRows, err := f.db.Query(ctx, childQuery, category.Id)
-		if err != nil {
-			return nil, err
+		} else {
+			// bu root
 		}
 
-		for childRows.Next() {
+		categoryByParent.Id = id.String
+		category.ParentID = parent_id.String
 
-			var (
-				id          sql.NullString
-				name        sql.NullString
-				parent_uuid sql.NullString
-				created_at  sql.NullString
-				updated_at  sql.NullString
-			)
+		resp.Categories = append(resp.Categories, &models.Categories{
+			Id:       id.String,
+			ParentID: parent_id.String,
+		})
 
-			err := childRows.Scan(
-				&id,
-				&name,
-				&parent_uuid,
-				&created_at,
-				&updated_at,
-			)
-
-			if err != nil {
-				return nil, err
-			}
-
-			category.ChildCategory = append(category.ChildCategory, &models.Category{
-				Id:         id.String,
-				Name:       name.String,
-				ParentUUID: parent_uuid.String,
-				CreatedAt:  created_at.String,
-				UpdatedAt:  updated_at.String,
-			})
-
-		}
-
-		resp.Categorys[ind] = category
-		fmt.Println(category)
 	}
 
 	return &resp, err
 }
 
-func (f *CategoryRepo) Update(ctx context.Context, id string, req *models.UpdateCategory) (int64, error) {
+func (f *CategoriesRepo) Update(ctx context.Context, id string, req *models.UpdateCategories) (int64, error) {
 
 	var (
 		query  = ""
@@ -285,7 +480,7 @@ func (f *CategoryRepo) Update(ctx context.Context, id string, req *models.Update
 
 	params = map[string]interface{}{
 		"name":        req.Name,
-		"parent_uuid": req.ParentUUID,
+		"parent_uuid": req.ParentID,
 		"id":          id,
 	}
 
@@ -299,7 +494,7 @@ func (f *CategoryRepo) Update(ctx context.Context, id string, req *models.Update
 	return rowsAffected.RowsAffected(), nil
 }
 
-func (f *CategoryRepo) Delete(ctx context.Context, req *models.CategoryPrimarKey) error {
+func (f *CategoriesRepo) Delete(ctx context.Context, req *models.CategoriesPrimarKey) error {
 
 	_, err := f.db.Exec(ctx, "UPDATE categorys SET deleted_at = now() WHERE id = $1", req.Id)
 	if err != nil {

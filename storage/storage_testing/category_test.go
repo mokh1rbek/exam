@@ -14,26 +14,26 @@ func TestCategoryCreate(t *testing.T) {
 
 	tests := []struct {
 		Name    string
-		Input   *models.CreateCategory
+		Input   *models.CreateCategories
 		WantErr bool
 	}{
 		{
 			Name: "case 1",
-			Input: &models.CreateCategory{
+			Input: &models.CreateCategories{
 				Name: faker.Name(),
 			},
 			WantErr: false,
 		},
 		{
 			Name: "case 2",
-			Input: &models.CreateCategory{
+			Input: &models.CreateCategories{
 				Name: faker.Name(),
 			},
 			WantErr: true,
 		},
 		{
 			Name: "case 3",
-			Input: &models.CreateCategory{
+			Input: &models.CreateCategories{
 				Name: faker.Name(),
 			},
 			WantErr: false,
@@ -67,16 +67,16 @@ func TestCategoryGetById(t *testing.T) {
 
 	tests := []struct {
 		Name    string
-		Input   *models.CategoryPrimarKey
-		Output  *models.Category
+		Input   *models.CategoriesPrimarKey
+		Output  *models.Categories
 		WantErr bool
 	}{
 		{
 			Name: "case 1",
-			Input: &models.CategoryPrimarKey{
+			Input: &models.CategoriesPrimarKey{
 				Id: "",
 			},
-			Output: &models.Category{
+			Output: &models.Categories{
 				Id:        "",
 				Name:      "",
 				CreatedAt: "",
@@ -100,7 +100,7 @@ func TestCategoryGetById(t *testing.T) {
 				return
 			}
 
-			comparer := cmp.Comparer(func(x, y models.Category) bool {
+			comparer := cmp.Comparer(func(x, y models.Categories) bool {
 				return x.Name == y.Name
 			})
 
@@ -117,16 +117,16 @@ func TestCategoryUpdate(t *testing.T) {
 
 	tests := []struct {
 		Name    string
-		Input   *models.UpdateCategory
-		Output  *models.Category
+		Input   *models.UpdateCategories
+		Output  *models.Categories
 		WantErr bool
 	}{
 		{
 			Name: "case 1",
-			Input: &models.UpdateCategory{
+			Input: &models.UpdateCategories{
 				Name: "",
 			},
-			Output: &models.Category{
+			Output: &models.Categories{
 				Name: "",
 			},
 			WantErr: false,
@@ -150,12 +150,12 @@ func TestCategoryUpdate(t *testing.T) {
 
 			res, err := categoryRepo.GetByPKey(
 				context.Background(),
-				&models.CategoryPrimarKey{
+				&models.CategoriesPrimarKey{
 					Id: tc.Input.Id,
 				},
 			)
 
-			comparer := cmp.Comparer(func(x, y models.Category) bool {
+			comparer := cmp.Comparer(func(x, y models.Categories) bool {
 				return x.Name == y.Name
 			})
 
@@ -172,13 +172,13 @@ func TestCategoryDelete(t *testing.T) {
 
 	tests := []struct {
 		Name    string
-		Input   *models.CategoryPrimarKey
+		Input   *models.CategoriesPrimarKey
 		Want    string
 		WantErr bool
 	}{
 		{
 			Name: "case 1",
-			Input: &models.CategoryPrimarKey{
+			Input: &models.CategoriesPrimarKey{
 				Id: "",
 			},
 			Want:    "no rows in result set",
@@ -202,7 +202,7 @@ func TestCategoryDelete(t *testing.T) {
 
 			_, err = categoryRepo.GetByPKey(
 				context.Background(),
-				&models.CategoryPrimarKey{
+				&models.CategoriesPrimarKey{
 					Id: tc.Input.Id,
 				},
 			)

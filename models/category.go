@@ -1,43 +1,35 @@
 package models
 
-type CategoryPrimarKey struct {
-	Id         string `json:"category_id"`
-	ParentUUID string `json:"parent_uuid"`
+type CategoriesPrimarKey struct {
+	Id       string `json:"category_id"`
+	ParentID string `json:"parent_id"`
 }
 
-type CreateCategory struct {
-	Name       string `json:"name"`
-	ParentUUID string `json:"parent_uuid"`
+type CreateCategories struct {
+	Name     string `json:"name"`
+	ParentID string `json:"parent_id"`
 }
-type Category struct {
-	Id         string `json:"category_id"`
-	Name       string `json:"name"`
-	ParentUUID string `json:"parent_uuid"`
-	CreatedAt  string `json:"created_at"`
-	UpdatedAt  string `json:"updated_at"`
-}
-
-type UpdateCategory struct {
-	Id         string `json:"category_id"`
-	Name       string `json:"name"`
-	ParentUUID string `json:"parent_uuid"`
+type Categories struct {
+	Id            string        `json:"category_id"`
+	Name          string        `json:"name"`
+	ParentID      string        `json:"parent_id"`
+	CreatedAt     string        `json:"created_at"`
+	UpdatedAt     string        `json:"updated_at"`
+	ChildCategory []*Categories `json:"childs"`
 }
 
-type GetListCategoryRequest struct {
+type UpdateCategories struct {
+	Id       string `json:"category_id"`
+	Name     string `json:"name"`
+	ParentID string `json:"parent_id"`
+}
+
+type GetListCategoriesRequest struct {
 	Limit  int32
 	Offset int32
 }
 
-type GetListCategoryResponse struct {
-	Count     int32               `json:"count"`
-	Categorys []*CategoryByParent `json:"categorys"`
-}
-
-type CategoryByParent struct {
-	Id            string      `json:"id"`
-	Name          string      `json:"name"`
-	ParentUUID    string      `json:"parent_uuid"`
-	CreatedAt     string      `json:"created_at"`
-	UpdatedAt     string      `json:"updated_at"`
-	ChildCategory []*Category `json:"childs"`
+type GetListCategoriesResponse struct {
+	Count      int32         `json:"count"`
+	Categories []*Categories `json:"categorys"`
 }

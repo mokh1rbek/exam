@@ -25,25 +25,25 @@ import (
 // @Response 400 {object} string "Invalid Argument"
 // @Failure 500 {object} string "Server Error"
 func (h *HandlerV1) CreateCategory(c *gin.Context) {
-	var category models.CreateCategory
+	var categories models.CreateCategories
 
-	err := c.ShouldBindJSON(&category)
+	err := c.ShouldBindJSON(&categories)
 	if err != nil {
 		log.Printf("error whiling create: %v\n", err)
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	id, err := h.storage.Category().Create(context.Background(), &category)
+	id, err := h.storage.Categories().Create(context.Background(), &categories)
 	if err != nil {
 		log.Printf("error whiling Create: %v\n", err)
 		c.JSON(http.StatusInternalServerError, errors.New("error whiling Create").Error())
 		return
 	}
 
-	resp, err := h.storage.Category().GetByPKey(
+	resp, err := h.storage.Categories().GetByPKey(
 		context.Background(),
-		&models.CategoryPrimarKey{Id: id},
+		&models.CategoriesPrimarKey{Id: id},
 	)
 
 	if err != nil {
@@ -71,9 +71,9 @@ func (h *HandlerV1) GetCategoryById(c *gin.Context) {
 
 	id := c.Param("id")
 
-	resp, err := h.storage.Category().GetByPKey(
+	resp, err := h.storage.Categories().GetByPKey(
 		context.Background(),
-		&models.CategoryPrimarKey{Id: id},
+		&models.CategoriesPrimarKey{Id: id},
 	)
 
 	if err != nil {
@@ -125,9 +125,9 @@ func (h *HandlerV1) GetCategoryList(c *gin.Context) {
 		}
 	}
 
-	resp, err := h.storage.Category().GetList(
+	resp, err := h.storage.Categories().GetList(
 		context.Background(),
-		&models.GetListCategoryRequest{
+		&models.GetListCategoriesRequest{
 			Limit:  int32(limit),
 			Offset: int32(offset),
 		},
@@ -159,7 +159,7 @@ func (h *HandlerV1) GetCategoryList(c *gin.Context) {
 func (h *HandlerV1) UpdateCategory(c *gin.Context) {
 
 	var (
-		category models.UpdateCategory
+		category models.UpdateCategories
 	)
 
 	id := c.Param("id")
@@ -177,7 +177,7 @@ func (h *HandlerV1) UpdateCategory(c *gin.Context) {
 		return
 	}
 
-	rowsAffected, err := h.storage.Category().Update(
+	rowsAffected, err := h.storage.Categories().Update(
 		context.Background(),
 		id,
 		&category,
@@ -195,9 +195,9 @@ func (h *HandlerV1) UpdateCategory(c *gin.Context) {
 		return
 	}
 
-	resp, err := h.storage.Category().GetByPKey(
+	resp, err := h.storage.Categories().GetByPKey(
 		context.Background(),
-		&models.CategoryPrimarKey{Id: id},
+		&models.CategoriesPrimarKey{Id: id},
 	)
 
 	if err != nil {
@@ -230,9 +230,9 @@ func (h *HandlerV1) DeleteCategory(c *gin.Context) {
 		return
 	}
 
-	err := h.storage.Category().Delete(
+	err := h.storage.Categories().Delete(
 		context.Background(),
-		&models.CategoryPrimarKey{
+		&models.CategoriesPrimarKey{
 			Id: id,
 		},
 	)
